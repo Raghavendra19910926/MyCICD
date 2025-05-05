@@ -33,9 +33,19 @@ jobs:
           NEW_VERSION_CODE=$((VERSION_CODE + 1))
           sed -i "s/VERSION_CODE=$VERSION_CODE/VERSION_CODE=$NEW_VERSION_CODE/" version.properties
           echo "Updated VERSION_CODE to $NEW_VERSION_CODE"
-          
-      - name: Build Debug APK
-        run: ./gradlew assembleDebug
+
+      - name: Decode Keystore
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > release.keystore
+
+      - name: Set Env Vars
+        run: |
+          echo "KEYSTORE_PATH=$GITHUB_WORKSPACE/release.keystore" >> $GITHUB_ENV
+          echo "KEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
+          echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> $GITHUB_ENV
+          echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> $GITHUB_ENV    
+                
+      - name: Build Signed APK
+        run: ./gradlew assembleRelease
 
       - name: Upload to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
