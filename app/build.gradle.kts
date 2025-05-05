@@ -1,6 +1,14 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+}
+
+// Load version properties
+val versionPropsFile = rootProject.file("version.properties")
+val versionProps = Properties().apply {
+    load(versionPropsFile.inputStream())
 }
 
 android {
@@ -11,8 +19,8 @@ android {
         applicationId = "com.sgcommon.mycicd"
         minSdk = 25
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = versionProps["VERSION_CODE"].toString().toInt()
+        versionName = versionProps["VERSION_NAME"].toString()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
