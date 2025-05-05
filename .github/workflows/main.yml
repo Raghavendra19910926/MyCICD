@@ -44,13 +44,16 @@ jobs:
           echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> $GITHUB_ENV
           echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> $GITHUB_ENV    
                 
-      - name: Build Signed APK
-        run: ./gradlew assembleRelease
+      - name: Build Signed AAB
+        run: ./gradlew bundleRelease  # This creates an .aab file
+
+      - name: List build outputs
+        run: ls -R app/build/outputs
 
       - name: Upload to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
           appId: ${{ secrets.FIREBASE_APP_ID }}
           serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
-          file: app/build/outputs/apk/release/app-release.apk
+          file: app/build/outputs/bundle/release/app-release.aab
           groups: testers
