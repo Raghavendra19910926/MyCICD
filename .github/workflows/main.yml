@@ -32,10 +32,18 @@ jobs:
           VERSION_CODE=$(grep VERSION_CODE version.properties | cut -d'=' -f2)
           NEW_VERSION_CODE=$((VERSION_CODE + 1))
           sed -i "s/VERSION_CODE=$VERSION_CODE/VERSION_CODE=$NEW_VERSION_CODE/" version.properties
-          git config user.name "Raghavendra19910926"
-          git config user.email "raghaven19910926@gmail.com"
-          git commit -am "Increment version code to $NEW_VERSION_CODE"
-          git push
+          echo "Updated VERSION_CODE to $NEW_VERSION_CODE"
+
+      - name: Commit and Push Version Code
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add version.properties
+          git commit -m "Increment version code" || echo "No changes to commit"
+          git push https://x-access-token:${GH_PAT}@github.com/${{ github.repository }} HEAD:main
+
         
       - name: Build Debug APK
         run: ./gradlew assembleDebug
