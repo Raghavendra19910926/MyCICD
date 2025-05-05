@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.sgcommon.mycicd"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.sgcommon.mycicd"
